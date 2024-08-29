@@ -23,6 +23,7 @@ var/
 wheels/
 share/python-wheels/
 *.egg-info/
+script/ffmpeg/bin/
 .installed.cfg
 *.egg
 MANIFEST
