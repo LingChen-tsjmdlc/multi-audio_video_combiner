@@ -3,7 +3,7 @@ import shutil
 import yaml
 
 
-def edit_config():
+def edit_config(config_path):
     # 读取用户输入的路径，并确保不为空
     while True:
         render_dir = input("输入渲染完成后序列帧路径：")
@@ -29,14 +29,14 @@ def edit_config():
             audio_dir = audio_dir.replace('\\', '/')
             break
         else:
-            with open('configs/config_temp.yaml', 'r', encoding='utf-8') as file:
+            with open(config_path, 'r', encoding='utf-8') as file:
                 config = yaml.safe_load(file)
             default_dir = config['game_dir']
             print(f"已经使用默认路径:{default_dir}/ResourceForPlayer/userdata/external_sound")
             default_audio_dir = f"{default_dir}/ResourceForPlayer/userdata/external_sound"
             config['default_audio_dir'] = default_audio_dir
             config['audio_dir'] = None
-            with open('configs/config_temp.yaml', 'w', encoding='utf-8') as file:
+            with open(config_path, 'w', encoding='utf-8') as file:
                 yaml.dump(config, file, default_flow_style=False, allow_unicode=True)
             break
 
@@ -53,7 +53,7 @@ def edit_config():
         else:
             print("路径不能为空，请重新输入。")
 
-    with open('configs/config_temp.yaml', 'r', encoding='utf-8') as file:
+    with open(config_path, 'r', encoding='utf-8') as file:
         config = yaml.safe_load(file)
 
     # 更新配置
@@ -63,15 +63,16 @@ def edit_config():
     config['movie_save_dir'] = movie_save_dir
 
     # 将更新后的数据写回YAML文件
-    with open('configs/config_temp.yaml', 'w', encoding='utf-8') as file:
+    with open(config_path, 'w', encoding='utf-8') as file:
         yaml.dump(config, file, default_flow_style=False, allow_unicode=True)
 
     print("配置已更新。")
-    if os.path.exists('configs/config.yaml'):
-        os.remove('configs/config.yaml')
-    shutil.copy('configs/config_temp.yaml', 'configs/config.yaml')
-    print(f"{config}")
+    # if os.path.exists('configs/config.yaml'):
+    #     os.remove('configs/config.yaml')
+    # shutil.copy('configs/config_temp.yaml', 'configs/config.yaml')
+    print(f"当前配置：{config}")
 
 
 if __name__ == "__main__":
-    edit_config()
+    config_path = "../configs/config.yaml"
+    edit_config(config_path)
