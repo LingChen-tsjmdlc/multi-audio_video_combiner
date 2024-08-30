@@ -4,7 +4,7 @@ import os
 import logging
 
 
-def log_and_print(message, log_file_path, log_file_name):
+def log_and_print(message, log_file_path, log_file_name,only_log=False):
     if not log_file_path.endswith('/'):
         log_file_path += '/'
     log_file_name = log_file_name.replace('.log', '')
@@ -28,10 +28,15 @@ def log_and_print(message, log_file_path, log_file_name):
     logger = logging.getLogger()
 
     """<--- 打印消息到控制台并记录到日志文件 --->"""
-    print(message)
-    logger.info(message)
+    if only_log:
+        logger.info(message)
+    else:
+        print(message)
+        logger.info(message)
 
 
 # 使用示例
 if __name__ == "__main__":
-    log_and_print("这是一个日志消息", "../logs/","日志输出一体化测试")
+    log_and_print("这是一个日志消息(only_log)", "../logs/","日志输出一体化测试",True)
+    log_and_print("这是一个日志消息", "../logs/","日志输出一体化测试",False)
+

@@ -1,16 +1,11 @@
 import subprocess
 import os
 import re
+import sys
+import time
 
-# 视频和音频文件的路径
-video_file = 'script/temp/output_video.mp4'
-audio_file = 'script/temp/output_audio.wav'
-
-# 合并后的文件输出路径
-output_file = 'Output/output_file.mp4'
-
-# ffmpeg命令，添加了-progress选项来输出进度信息
-ffmpeg_command = f'ffmpeg -i "{video_file}" -i "{audio_file}" -c:v copy -c:a aac -strict experimental -progress - "{output_file}"'
+sys.path.append('./script')  # 添加script目录到sys.path
+from script.tools import printAndLog
 
 
 def convert_time_to_seconds(time_str):
@@ -21,62 +16,56 @@ def convert_time_to_seconds(time_str):
     return hours * 3600 + minutes * 60 + seconds
 
 
-def mixer():
-    print("正在合并音频与视频")
+def mixer(video_path, audio_path, output_path, log_file_path, log_file_name):
+    printAndLog.log_and_print("正在合并音频与视频……", log_file_path, log_file_name)
+    # 添加了-loglevel debug选项来输出调试信息
+    ffmpeg_command = f'ffmpeg -i "{video_path}" -i "{audio_path}" -c:v copy -c:a aac -strict experimental -loglevel verbose -progress - "{output_path}"'
+    if os.path.exists(output_path):
+        os.remove(output_path)
+        print(f"已存在的文件 '{output_path}' 已被替换。")
 
-    # 检查输出文件是否存在
-    if os.path.exists(output_file):
-        # 如果文件存在，可以选择删除或重命名
-        os.remove(output_file)
-        print(f"已存在的文件 '{output_file}' 已被替换。")
-
-    # 执行命令
     try:
-        # 使用subprocess.Popen而不是subprocess.run，以便实时获取输出
-        process = subprocess.Popen(ffmpeg_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        process = subprocess.Popen(ffmpeg_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   text=True)
 
-        # 正则表达式来匹配ffmpeg进度输出
         time_pattern = re.compile(r"out_time=(\S+)")
         size_pattern = re.compile(r"total_size=(\S+)")
 
-        # 初始化变量
         total_size = None
         last_time = None
 
-        # 读取ffmpeg的输出
         while True:
             line = process.stdout.readline()
             if not line:
                 break
-
-            # 查找total_size
+            printAndLog.log_and_print(f"{line.strip()}", log_file_path, log_file_name,True)
             size_match = size_pattern.search(line)
             if size_match:
                 total_size = float(size_match.group(1))
-
-            # 查找out_time
             time_match = time_pattern.search(line)
             if time_match:
                 current_time = time_match.group(1)
                 if total_size and current_time != last_time:
-                    # 将时间字符串转换为秒
                     current_seconds = convert_time_to_seconds(current_time)
-                    # 计算进度
                     progress = current_seconds / total_size * 100
                     print(f"当前进度: {progress:.2f}%")
                     last_time = current_time
-
-        # 等待ffmpeg命令执行完成
         process.wait()
-
         if process.returncode == 0:
-            print("视频和音频合并成功！")
+            printAndLog.log_and_print(f"视频和音频合并成功！", log_file_path, log_file_name)
+            printAndLog.log_and_print("当前进度 100%\n", log_file_path, log_file_name)
         else:
-            print(f"合并过程中发生错误，退出码: {process.returncode}")
+            printAndLog.log_and_print(f"合并过程中发生错误，退出码: {process.returncode}\n\n\n\n\n", log_file_path,
+                                      log_file_name)
 
     except subprocess.CalledProcessError as e:
-        print(f"合并过程中发生错误: {e}")
+        printAndLog.log_and_print(f"未知错误！合并过程中发生错误: {e}\n\n\n\n\n", log_file_path, log_file_name)
 
 
 if __name__ == "__main__":
-    mixer()
+    video_dir = 'temp/output_video.mp4'
+    audio_dir = 'temp/output_audio.wav'
+    output_dir = 'output_file.mp4'
+    log_file_dir = '../logs/'
+    log_name = '混合视频音频日志'
+    mixer(video_dir, audio_dir, output_dir, log_file_dir, log_name)
