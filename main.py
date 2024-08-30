@@ -1,9 +1,9 @@
-import datetime
 import os
 import sys
 import time
 import logging
 import yaml
+import pprint
 
 sys.path.append('./script')  # 添加script目录到sys.path
 from script.tools import printAndLog
@@ -15,15 +15,14 @@ output_audio_dir = "script/temp/output_audio.wav"
 output_dir = 'Output/output_file.mp4'
 log_dir = 'logs'
 json_dir = 'script/temp/output.json'
-log_name_for_get_video_time = '日志_获取视频时长'
-log_name_for_get_save_project_info = '日志_获取音频数据和音频起始时间'
-log_name_for_audio_mix = '日志_合并音频'
-log_name_for_mix_audio_and_video = '日志_合并音视频'
 
 try:
     now_time = time.strftime('%Y-%m-%d_%H-%M-%S')
-    printAndLog.log_and_print("正在合并音频与视频……", log_dir, f'主日志_{now_time}')
     log_name = f'主日志_{now_time}'
+
+    with open(config_dir, 'r', encoding='utf-8') as file:
+        config = yaml.safe_load(file)
+    printAndLog.log_and_print(f"---> 当前config：{config}", log_dir, log_name, True)
 
     if os.path.exists('script/temp/output_audio.wav'):
         os.remove('script/temp/output_audio.wav')
@@ -39,7 +38,7 @@ try:
     VideoMix.video_mix(ffmpeg_dir, config_dir, output_video_dir, log_dir,log_name)
     # 获取视频时长
     printAndLog.log_and_print("<-------------------- 【2.获取视频时长】(getVideoTime.py) -------------------->", log_dir, log_name)
-    getVideoTime.get_video_time(output_video_dir, ffmpeg_dir, config_dir, log_dir, log_name_for_get_video_time)
+    getVideoTime.get_video_time(output_video_dir, ffmpeg_dir, config_dir, log_dir, log_name)
     # 获取工程文件中的音频信息和时间信息
     printAndLog.log_and_print("<-------------------- 【3.获取音频时间信息】(getAudioStartTimeAndName.py) -------------------->", log_dir, log_name)
     getAudioStartTimeAndName.get_audio_start_time_and_name(config_dir, json_dir, log_dir, log_name)

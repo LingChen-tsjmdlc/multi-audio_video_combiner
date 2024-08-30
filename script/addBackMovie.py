@@ -13,8 +13,9 @@ resolution = "1080x1920"
 duration = "1"  # 单位：秒
 
 
-def add_empty_video(output_file, ffmpeg_path, cmd_log_level, work_path):
+def add_empty_video(output_file, ffmpeg_path, cmd_log_level, work_path,log_file_dir,log_name):
     try:
+        video_path = os.path.join(work_path, output_file)
         # 构建FFmpeg命令
         ffmpeg_command = [
             ffmpeg_path,
@@ -23,25 +24,24 @@ def add_empty_video(output_file, ffmpeg_path, cmd_log_level, work_path):
             "-c:v", "libx264",
             "-t", duration,
             "-pix_fmt", "yuv420p",
-            output_file,
+            video_path,
             "-loglevel", cmd_log_level,
         ]
-
-        # print(f"Current working directory: {os.getcwd()}")
+        # 检查目标输出文件是否存在，如果存在，则删除它
+        if os.path.exists(video_path):
+            os.remove(video_path)
+            printAndLog.log_and_print(f"文件 {output_file} 已删除。", log_file_dir, log_name)
 
         # 执行FFmpeg命令，将工作目录设置为当前目录下的temp文件夹
-        with open("logs/初始化-ffmpeg_output.log", "w") as log_file:
+        with open(f"{log_file_dir}{log_name}", "w") as log_file:
             subprocess.run(ffmpeg_command, stdout=log_file, stderr=log_file)
 
         video_path = os.path.join("temp", output_file)
         os.path.exists(video_path)
 
-        log_file_path = "logs/"
-        log_file_name = "初始化日志"
-
-        printAndLog.log_and_print('初始化mp4文件已生成。', log_file_path, log_file_name)
+        printAndLog.log_and_print('初始化mp4文件已生成。', log_file_dir, log_name)
     except Exception as e:
-        printAndLog.log_and_print(e, "logs/", "初始化日志")
+        printAndLog.log_and_print(e, log_file_dir, log_name)
 
 
 if __name__ == "__main__":
@@ -49,4 +49,6 @@ if __name__ == "__main__":
     ffmpeg_path = "ffmpeg/bin/ffmpeg.exe"
     cmd_log_level = "debug"
     work_path = "temp/"
-    add_empty_video(output_file, ffmpeg_path, cmd_log_level, work_path)
+    log_file_dir = '../logs/'
+    log_name = '初始化视频日志.log'
+    add_empty_video(output_file, ffmpeg_path, cmd_log_level, work_path,log_file_dir,log_name)

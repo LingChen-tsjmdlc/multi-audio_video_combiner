@@ -69,7 +69,7 @@ from script import addNewConfigFile
 from script.tools import printAndLog
 
 log_file_path = os.path.join("logs/")
-formatted_time = time.strftime('%Y-%m-%d_%H:%M:%S', time.localtime())
+formatted_time = time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime())
 log_file_name = f"初始化日志_{formatted_time}.log"
 
 # 初始化 config 文件
@@ -79,13 +79,14 @@ addNewConfigFile.creat_new_config_file(config_file_path)
 addNewConfigFile.add_game_path(config_file_path)
 printAndLog.log_and_print("\n<---------- 初始化临时文件 ---------->", log_file_path, log_file_name)
 # 初始化视频
-output_file = os.path.join("script/temp/output_video.mp4")
+output_file_name = os.path.join("output_video.mp4")
 ffmpeg_path = os.path.join("script/ffmpeg/bin/ffmpeg.exe")
 cmd_log_level = os.path.join("debug")
 work_path = os.path.join("script/temp/")
-addBackMovie.add_empty_video(output_file, ffmpeg_path, cmd_log_level, work_path)
+addBackMovie.add_empty_video(output_file_name, ffmpeg_path, cmd_log_level, work_path, 'logs/', f"初始化日志_{formatted_time}.log")
 # 初始化 json 文件
 json_output_filename = 'script/temp/output.json'
 addEmptyJson.add_empty_json_file(json_output_filename)
 
 printAndLog.log_and_print("\n初始化已完成！按任意键继续...", log_file_path, log_file_name)
+input("")
