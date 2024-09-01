@@ -8,7 +8,7 @@ sys.path.append('./script')  # 添加script目录到sys.path
 from script.tools import printAndLog
 
 
-def get_audio_start_time_and_name(config_path, json_path, log_file_path, log_file_name):
+def get_audio_start_time_and_name(config_path, json_path, log_file_path, log_file_name,audio_file_format):
     try:
         # 存储结果的列表
         results = []
@@ -28,7 +28,7 @@ def get_audio_start_time_and_name(config_path, json_path, log_file_path, log_fil
         for track in matches:
             # 查找StartTime和ExternalSoundEvent
             start_time_pattern = r'StartTime="(\d+)"'
-            external_sound_event_pattern = r'ExternalSoundEvent="([^"]+\.wav)"'
+            external_sound_event_pattern = fr'ExternalSoundEvent="([^"]+\.{audio_file_format})"'
 
             start_time_matches = re.findall(start_time_pattern, track)
             external_sound_event_matches = re.findall(external_sound_event_pattern, track)
@@ -36,7 +36,7 @@ def get_audio_start_time_and_name(config_path, json_path, log_file_path, log_fil
             # 处理并输出每个匹配项
             for start_time, external_sound_event in zip(start_time_matches, external_sound_event_matches):
                 # 提取.wav前面的、\后面的文字
-                sound_event_match = re.search(r'\\.*\.wav', external_sound_event)
+                sound_event_match = re.search(fr'\\.*\.{audio_file_format}', external_sound_event)
                 if sound_event_match:
                     sound_event_name = sound_event_match.group()
                     sound_event_name = sound_event_name.replace('\\', '/')
@@ -70,4 +70,5 @@ if __name__ == "__main__":
     json_dir = 'temp/output.json'
     log_file_dir = '../logs/'
     log_file_name = '获取音频数据日志'
-    get_audio_start_time_and_name(config_dir, json_dir, log_file_dir, log_file_name)
+    audio_file_format = 'mp3'
+    get_audio_start_time_and_name(config_dir, json_dir, log_file_dir, log_file_name, audio_file_format)

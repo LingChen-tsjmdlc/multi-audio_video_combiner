@@ -23,6 +23,7 @@ try:
     with open(config_dir, 'r', encoding='utf-8') as file:
         config = yaml.safe_load(file)
     printAndLog.log_and_print(f"---> 当前config：{config}", log_dir, log_name, True)
+    audio_file_format = config['audio_file_format']
 
     if os.path.exists('script/temp/output_audio.wav'):
         os.remove('script/temp/output_audio.wav')
@@ -41,13 +42,13 @@ try:
     getVideoTime.get_video_time(output_video_dir, ffmpeg_dir, config_dir, log_dir, log_name)
     # 获取工程文件中的音频信息和时间信息
     printAndLog.log_and_print("<-------------------- 【3.获取音频时间信息】(getAudioStartTimeAndName.py) -------------------->", log_dir, log_name)
-    getAudioStartTimeAndName.get_audio_start_time_and_name(config_dir, json_dir, log_dir, log_name)
+    getAudioStartTimeAndName.get_audio_start_time_and_name(config_dir, json_dir, log_dir, log_name,audio_file_format)
     # 混合音频
     printAndLog.log_and_print("<-------------------- 【4.混合音频】(AudioMix.py) -------------------->", log_dir, log_name)
     AudioMix.audio_mix(config_dir, json_dir, output_audio_dir, log_dir, log_name)
     # 混合视频
     printAndLog.log_and_print("<-------------------- 【5.混合视频】(Mixer.py) -------------------->", log_dir, log_name)
-    Mixer.mixer(output_video_dir, output_audio_dir, output_dir, log_dir, log_name)
+    Mixer.mixer(ffmpeg_dir, output_video_dir, output_audio_dir, output_dir, log_dir, log_name)
 
     printAndLog.log_and_print("程序已结束。\n视频在Output文件夹下。\n按任意键结束程序...", log_dir, log_name)
     # 关闭日志记录器

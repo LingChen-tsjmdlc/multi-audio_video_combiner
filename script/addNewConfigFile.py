@@ -35,7 +35,8 @@ config_data = {
     "game_dir": "",
     "movie_save_dir": "",
     "render_dir": "",
-    "video_time": 0
+    "video_time": 0,
+    "audio_file_format": ".wav"
 }
 
 

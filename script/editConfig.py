@@ -54,11 +54,27 @@ def edit_config(config_path, log_file_path, log_file_name):
                 yaml.dump(config, file, default_flow_style=False, allow_unicode=True)
             break
 
+    # 获取音频的格式
+    valid_formats = 'wav mp3 ogg aif wma aac ra vqf amr ape flac'.split()
+
     while True:
-        printAndLog.log_and_print("4.输入movie文件的路径：", log_file_path, log_file_name)
+        printAndLog.log_and_print("4.输入音频的格式：", log_file_path, log_file_name)
+        audio_format = input("")
+        if audio_format:
+            audio_format = f'{audio_format}'
+            printAndLog.log_and_print(f"---> 当前输入音频的格式是：{audio_format}", log_file_path, log_file_name)
+            if audio_format in valid_formats:
+                break
+            else:
+                printAndLog.log_and_print(f"-X- 你输入的{audio_format}好像不是音频格式哦", log_file_path, log_file_name)
+        else:
+            printAndLog.log_and_print(f"-X- 音频的格式不能为空", log_file_path, log_file_name)
+
+    while True:
+        printAndLog.log_and_print("5.输入movie文件的路径：", log_file_path, log_file_name)
         movie_file_save_dir = input("")
         if movie_file_save_dir:
-            printAndLog.log_and_print("5.输入movie文件的文件名：", log_file_path, log_file_name)
+            printAndLog.log_and_print("6.输入movie文件的文件名：", log_file_path, log_file_name)
             movie_file_name = input("")
             if movie_file_name:
                 movie_save_dir = f"{movie_file_save_dir}/{movie_file_name}.movie"
@@ -79,6 +95,7 @@ def edit_config(config_path, log_file_path, log_file_name):
     config['farm_output'] = farm_output
     config['audio_dir'] = audio_dir
     config['movie_save_dir'] = movie_save_dir
+    config['audio_file_format'] = audio_format
 
     # 将更新后的数据写回YAML文件
     with open(config_path, 'w', encoding='utf-8') as file:

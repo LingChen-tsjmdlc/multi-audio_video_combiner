@@ -32,7 +32,7 @@ def video_mix(ffmpeg_dir, config_dir, output_video_dir, log_dir, log_name):
             '-f', 'image2',
             '-i', f'{render_dir}/%04d.png',
             '-crf', '15',
-            '-loglevel', 'info',
+            '-loglevel', 'debug',
             output_video
         ]
 
