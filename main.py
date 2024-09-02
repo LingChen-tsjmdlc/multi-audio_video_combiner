@@ -8,10 +8,9 @@ import pprint
 sys.path.append('./script')  # 添加script目录到sys.path
 from script.tools import printAndLog
 
-ffmpeg_dir = 'script/ffmpeg/bin/ffmpeg.exe'
+ffmpeg_dir = 'script\\ffmpeg\\bin\\ffmpeg.exe'
 config_dir = 'configs/config.yaml'
 output_video_dir = 'script/temp/output_video.mp4'
-output_audio_dir = "script/temp/output_audio.wav"
 output_dir = 'Output/output_file.mp4'
 log_dir = 'logs'
 json_dir = 'script/temp/output.json'
@@ -24,9 +23,10 @@ try:
         config = yaml.safe_load(file)
     printAndLog.log_and_print(f"---> 当前config：{config}", log_dir, log_name, True)
     audio_file_format = config['audio_file_format']
+    output_audio_dir = f"script/temp/output_audio.{audio_file_format}"
 
-    if os.path.exists('script/temp/output_audio.wav'):
-        os.remove('script/temp/output_audio.wav')
+    if os.path.exists(f'script/temp/output_audio.{audio_file_format}'):
+        os.remove(f'script/temp/output_audio.{audio_file_format}')
 
     from script import VideoMix
     from script import getVideoTime
@@ -36,7 +36,7 @@ try:
 
     # 序列帧转视频
     printAndLog.log_and_print("<-------------------- 【1.序列帧转视频】(VideoMix.py) -------------------->", log_dir, log_name)
-    VideoMix.video_mix(ffmpeg_dir, config_dir, output_video_dir, log_dir,log_name)
+    VideoMix.video_mix(ffmpeg_dir, config_dir, output_video_dir, log_dir, log_name)
     # 获取视频时长
     printAndLog.log_and_print("<-------------------- 【2.获取视频时长】(getVideoTime.py) -------------------->", log_dir, log_name)
     getVideoTime.get_video_time(output_video_dir, ffmpeg_dir, config_dir, log_dir, log_name)
