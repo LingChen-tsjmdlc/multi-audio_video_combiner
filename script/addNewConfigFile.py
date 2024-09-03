@@ -36,7 +36,7 @@ config_data = {
     "movie_save_dir": "",
     "render_dir": "",
     "video_time": 0,
-    "audio_file_format": ".wav"
+    "audio_file_format": "wav"
 }
 
 

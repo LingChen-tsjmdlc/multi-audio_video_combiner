@@ -20,6 +20,7 @@ def mixer(ffmpeg_path, video_path, audio_path, output_path, log_file_path, log_f
     printAndLog.log_and_print("正在合并音频与视频……", log_file_path, log_file_name)
     # 添加了-loglevel debug选项来输出调试信息
     ffmpeg_command = f'{ffmpeg_path} -i "{video_path}" -i "{audio_path}" -c:v copy -c:a aac -strict experimental -loglevel verbose -progress - "{output_path}"'
+    printAndLog.log_and_print(f"当前 ffmpeg 命令: {ffmpeg_command}", log_file_path, log_file_name)
     if os.path.exists(output_path):
         os.remove(output_path)
         print(f"已存在的文件 '{output_path}' 已被替换。")
@@ -63,10 +64,10 @@ def mixer(ffmpeg_path, video_path, audio_path, output_path, log_file_path, log_f
 
 
 if __name__ == "__main__":
-    ffmpeg_dir = 'ffmpeg/bin/ffmpeg.exe'
+    ffmpeg_dir = 'ffmpeg\\bin\\ffmpeg.exe'
     video_dir = 'temp/output_video.mp4'
     audio_dir = 'temp/output_audio.wav'
-    output_dir = 'output_file.mp4'
+    output_dir = '../Output/output_file-TEST.mp4'
     log_file_dir = '../logs/'
     log_name = '混合视频音频日志'
     mixer(ffmpeg_dir, video_dir, audio_dir, output_dir, log_file_dir, log_name)
