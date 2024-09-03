@@ -11,6 +11,7 @@ from script.tools import printAndLog
 ffmpeg_dir = 'script\\ffmpeg\\bin\\ffmpeg.exe'
 config_dir = 'configs/config.yaml'
 output_video_dir = 'script/temp/output_video.mp4'
+output_path_with_no_audio = 'script/temp/output_video-none_audio.mp4'
 output_dir = 'Output/output_file.mp4'
 log_dir = 'logs'
 json_dir = 'script/temp/output.json'
@@ -83,6 +84,7 @@ try:
                 printAndLog.log_and_print(f'请输入视频的名称：', log_dir, log_name)
                 v_name = input()
                 v_dir = os.path.join(v_path,v_name)
+                v_dir += '.mp4'
                 new_v_dir = os.path.join(current_directory, "script", "temp", "output_video.mp4")
                 shutil.copy(v_dir, new_v_dir)
                 printAndLog.log_and_print(f"当前用户输入的路径是：{v_dir}", log_dir, log_name, True)
@@ -92,7 +94,6 @@ try:
             printAndLog.log_and_print(f"当前用户输入的模式是：{mode_choose}", log_dir, log_name, True)
             printAndLog.log_and_print(f'不可以选择其他模式哦~', log_dir, log_name)
             input()
-            # continue
             sys.exit()
 
     with open(config_dir, 'r', encoding='utf-8') as file:
@@ -111,9 +112,12 @@ try:
     from script import Mixer
 
     # 序列帧转视频
-    printAndLog.log_and_print("<-------------------- 【1.序列帧转视频】(VideoMix.py) -------------------->", log_dir, log_name)
+
     if mode_choose == "1":
+        printAndLog.log_and_print("<-------------------- 【1.序列帧转视频】(VideoMix.py) -------------------->", log_dir,log_name)
         VideoMix.video_mix(ffmpeg_dir, config_dir, output_video_dir, log_dir, log_name)
+    if mode_choose != "1":
+        printAndLog.log_and_print("已跳过步骤1：序列帧转视频", log_dir, log_name)
     # 获取视频时长
     printAndLog.log_and_print("<-------------------- 【2.获取视频时长】(getVideoTime.py) -------------------->", log_dir, log_name)
     getVideoTime.get_video_time(output_video_dir, ffmpeg_dir, config_dir, log_dir, log_name)
@@ -125,9 +129,9 @@ try:
     AudioMix.audio_mix(config_dir, json_dir, output_audio_dir, log_dir, log_name)
     # 混合视频
     printAndLog.log_and_print("<-------------------- 【5.混合视频】(Mixer.py) -------------------->", log_dir, log_name)
-    Mixer.mixer(ffmpeg_dir, output_video_dir, output_audio_dir, output_dir, log_dir, log_name)
+    Mixer.mixer(ffmpeg_dir, output_video_dir, output_audio_dir, output_dir, log_dir, log_name, output_path_with_no_audio, config_dir)
 
-    printAndLog.log_and_print("程序已结束。\n视频在Output文件夹下。\n按任意键结束程序...", log_dir, log_name)
+    printAndLog.log_and_print("\n程序已结束。\n视频在Output文件夹下。\n按任意键结束程序...", log_dir, log_name)
     # 关闭日志记录器
     logging.shutdown()
 except Exception as e:
