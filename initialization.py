@@ -1,6 +1,12 @@
+import subprocess
 import sys
 import os
 import time
+
+if getattr(sys, 'frozen', False):
+    application_path = os.getcwd()  # 如果是打包后的程序
+else:
+    application_path = os.path.dirname(os.path.abspath(__file__))  # 如果是 非 打包后的程序
 
 # 定义要创建的目录列表
 directories_to_create = [
@@ -24,7 +30,6 @@ for directory in directories_to_create:
     except Exception as e:
         print(f"创建目录失败: {directory}, 错误: {e}")
 
-
 # 将根目录下的ffmpeg.exe移动到script/ffmpeg/bin目录
 ffmpeg_source_path = os.path.join("ffmpeg.exe")
 ffmpeg_destination_path = os.path.join("script/ffmpeg/bin/ffmpeg.exe")
@@ -45,11 +50,11 @@ else:
     sys.exit()
 
 # 移动 printAndLog.py
-file_to_move = os.path.join("printAndLog.py")   # 定义要移动的文件路径
-destination_directory = os.path.join("script/tools")    # 定义目标目录路径
-if not os.path.exists(destination_directory):   # 检查目标目录是否存在，如果不存在则创建
+file_to_move = os.path.join("printAndLog.py")  # 定义要移动的文件路径
+destination_directory = os.path.join("script/tools")  # 定义目标目录路径
+if not os.path.exists(destination_directory):  # 检查目标目录是否存在，如果不存在则创建
     os.makedirs(destination_directory)
-try:    # 尝试移动文件
+try:  # 尝试移动文件
     if os.path.exists(file_to_move):
         os.rename(file_to_move, os.path.join(destination_directory, os.path.basename(file_to_move)))
         print(f"文件已成功移动到 {destination_directory}")
@@ -72,6 +77,16 @@ log_file_path = os.path.join("logs/")
 formatted_time = time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime())
 log_file_name = f"初始化日志_{formatted_time}.log"
 
+# 将 ffmpeg 路径添加到环境变量
+path_ffmpeg_to_add = os.path.join(application_path, "script", "ffmpeg", "bin")
+try:
+    printAndLog.log_and_print("正在添加 ffmpeg 文件夹到路径", log_file_path, log_file_name)
+    subprocess.run(['setx', 'PATH', f'%PATH%;{path_ffmpeg_to_add}'], check=True)
+    printAndLog.log_and_print(f"已将 {path_ffmpeg_to_add} 永久添加到系统PATH环境变量中", log_file_path, log_file_name)
+except subprocess.CalledProcessError as e:
+    printAndLog.log_and_print(f"添加 {path_ffmpeg_to_add} 到系统PATH环境变量失败: {e}", log_file_path, log_file_name)
+    printAndLog.log_and_print(f"请手动添加{path_ffmpeg_to_add}路径到环境变量", log_file_path, log_file_name)
+    input()
 # 初始化 config 文件
 printAndLog.log_and_print("\n<---------- 初始化配置 ---------->", log_file_path, log_file_name)
 config_file_path = os.path.join("configs/config.yaml")
