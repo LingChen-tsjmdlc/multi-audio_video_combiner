@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 import sys
 import yaml
 import json
@@ -38,7 +39,8 @@ def audio_mix(config_path, json_path, output_audio_path, log_file_path, log_file
             # 将帧数转换为毫秒（1秒 = def_farm，1帧 = 1000ms/def_farm）
             start_time = int((start_frame / def_farm) * 1000)
             audio_path = os.path.join(audio_directory, audio_filename)  # 完整音频路径
-            # audio_path = audio_path.replace('\\', '/')  # 替换反斜杠为正斜杠
+            audio_path = audio_path.replace('/', '\\')  # 替换正斜杠为反斜杠
+            printAndLog.log_and_print(f"音频:{audio_path}", log_file_path, log_file_name,True)
 
             if not os.path.exists(audio_path):
                 printAndLog.log_and_print(f"音频{audio_path}未找到", log_file_path, log_file_name)

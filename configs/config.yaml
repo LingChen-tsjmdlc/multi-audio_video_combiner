@@ -1,5 +1,5 @@
-audio_dir: E:/Py_Project/multi-audio_video_combiner/script/temp/cut
-audio_file_format: mp3
+audio_dir:
+audio_file_format: wav
 def_farm: 28
 default_audio_dir: F:/LiShuiHan/逆水寒/artist/res/ResourceForPlayer/userdata/external_sound
 farm_output: 60
