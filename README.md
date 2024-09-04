@@ -99,4 +99,4 @@
 - VideoMix.py: 序列帧合成视频处理脚本。
 
 ## 开源协议
-**该项目签署了 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) 授权许可，详情请参阅 LICENSE.txt**
+**该项目签署了 [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) 授权许可，详情请参阅 [LICENSE.txt](LICENSE.txt)**
