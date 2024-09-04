@@ -2,6 +2,7 @@ import subprocess
 import sys
 import os
 import time
+import shutil
 
 if getattr(sys, 'frozen', False):
     application_path = os.getcwd()  # 如果是打包后的程序
@@ -35,17 +36,21 @@ ffmpeg_source_path = os.path.join("ffmpeg.exe")
 ffmpeg_destination_path = os.path.join("script/ffmpeg/bin/ffmpeg.exe")
 if os.path.exists(ffmpeg_source_path):
     try:
+        # 确保目标目录存在
+        os.makedirs(os.path.dirname(ffmpeg_destination_path), exist_ok=True)
+
         if not os.path.exists(ffmpeg_destination_path):
-            os.rename(ffmpeg_source_path, ffmpeg_destination_path)
-            print(f"ffmpeg.exe 已移动到 {ffmpeg_destination_path}")
+            # 使用 shutil 模块进行复制
+            shutil.copy(ffmpeg_source_path, ffmpeg_destination_path)
+            print(f"ffmpeg.exe 已复制到 {ffmpeg_destination_path}")
         else:
-            print(f"{ffmpeg_destination_path} 已存在，未移动 ffmpeg.exe")
+            print(f"{ffmpeg_destination_path} 已存在，未复制 ffmpeg.exe")
     except Exception as e:
-        print(f"移动 ffmpeg.exe 失败: {e}")
+        print(f"复制 ffmpeg.exe 失败: {e}")
         input("初始化失败！")
         sys.exit()
 else:
-    print("ffmpeg.exe 不在根目录下")
+    print("ffmpeg.exe 可能不在根目录下！")
     input("初始化失败！")
     sys.exit()
 
@@ -61,7 +66,8 @@ try:  # 尝试移动文件
     else:
         print(f"文件 {file_to_move} 不存在，无法移动。")
 except Exception as e:
-    print(f"移动文件失败: {e}")
+    print(f"移动 printAndLog.py 文件失败: {e}")
+    print("请手动移动到 script/tools 目录下，同时 printAndLog.py 可能不在根目录下！")
     input("初始化失败！")
     sys.exit()
 
